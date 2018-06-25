@@ -1,0 +1,23 @@
+version: '2'
+
+services:
+
+  mobile:
+    build:
+      dockerfile: Dockerfile
+      context: .
+    image: minatto/tcc-mobile
+    container_name: tcc-mobile
+    restart: always
+    volumes:
+      - ./:/app
+    ports:
+      - "8080:80"
+    networks:
+      - tcc-network
+    extra_hosts:
+      - "dev.tcc.com:192.168.25.218"
+
+networks:
+  tcc-network:
+    driver: bridge
