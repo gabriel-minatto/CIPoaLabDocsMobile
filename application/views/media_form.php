@@ -18,7 +18,7 @@
     </nav>
 
 
-    <div class="container h-100">
+    <div class="container h-100 pt-5">
 
         <div class="row h-100">
             <div class="col-xl-12 d-flex align-items-center">
@@ -32,9 +32,6 @@
                             <div class="row align-items-center">
                                 <div class="col-xl-10">
                                     <h2>Enviar Arquivo</h2>
-                                </div>
-                                <div class="col-xl-2 pl-0">
-                                    <a href="<?= base_url().'index.php/media/logout' ?>" id="logout" class="btn btn-info">Sair</a>
                                 </div>
                             </div>
                         </div>
@@ -82,6 +79,7 @@
                                     <label class="col-md-4 control-label" for="submit"></label>
                                     <div class="col-xl-12">
                                         <button id="submit" name="submit" class="btn btn-success">Enviar</button>
+                                        <a href="<?= base_url().'index.php/media/logout' ?>" id="logout" class="btn btn-info float-right">Sair</a>
                                     </div>
                                 </div>
 
