@@ -5,23 +5,49 @@ class Media extends CI_Controller {
 
 	var $data;
 
-	/**
-	 * Index Page for this controller.
-	 *
-	 * Maps to the following URL
-	 * 		http://example.com/index.php/welcome
-	 *	- or -
-	 * 		http://example.com/index.php/welcome/index
-	 *	- or -
-	 * Since this controller is set as the default controller in
-	 * config/routes.php, it's displayed at http://example.com/
-	 *
-	 * So any other public methods not prefixed with an underscore will
-	 * map to /index.php/welcome/<method_name>
-	 * @see https://codeigniter.com/user_guide/general/urls.html
-	 */
 	public function index() {
-		$this->load->view('media_form');
+
+		$this->data['isLoggedIn'] = false;
+
+		if($this->session->userdata('email') != "" && $this->session->userdata('password') != ""){
+			$this->data['isLoggedIn'] = true;
+		}
+
+		$this->load->view('media_form', $this->data);
+	}
+
+	public function login() {
+
+		$email = $this->input->post('email', true);
+		$password = $this->input->post('password', true);
+
+		$this->session->set_userdata('email', $email);
+		$this->session->set_userdata('password', $password);
+
+		$apiPath = $this->config->item('apiPath').'check-credentials';
+
+		$response = json_decode($this->httpRequest($apiPath));
+
+		if($response->status != 'ok') {
+
+			$user_data = $this->session->userdata();
+			foreach ($user_data as $key => $value) {
+
+				if ($key!='__ci_last_regenerate' && $key != '__ci_vars') {
+
+					$this->session->unset_userdata($key);
+				}
+			}
+			$this->session->set_flashdata('errors', ['Login inválido'] );
+		}
+
+		redirect(base_url());
+	}
+
+	public function logout() {
+
+		$this->session->sess_destroy();
+		redirect(base_url());
 	}
 
 	public function save() {
@@ -60,20 +86,14 @@ class Media extends CI_Controller {
 			redirect(base_url());
 		}
 
-		$apiToken = 'auth-token:'.$this->config->item('apiToken');
 		$apiPath = $this->config->item('apiPath').'media-files';
-
-		$header = [
-			$apiToken,
-			'Content-Type: application/x-www-form-urlencoded'
-		];
 
 		$params = [
 			"file" => $base64,
 			"title" => $this->input->post('name')
 		];
 
-		$response = json_decode($this->httpRequest($apiPath, $header, $params));
+		$response = json_decode($this->httpRequest($apiPath, $params));
 
 		if(isset($response->status) && $response->status == 'ok') {
 
@@ -83,15 +103,29 @@ class Media extends CI_Controller {
 
 	}
 
-	private function httpRequest($url, $headers, $params) {
-		print_r($url);
+	private function httpRequest($url, $params = false) {
+
+		$apiToken = 'auth-token:'.$this->config->item('apiToken');
+		$apiEmail = 'auth-email:'.$this->session->userdata('email');
+		$apiPassword = 'auth-password:'.$this->session->userdata('password');
+
+		$headers = [
+			$apiToken,
+			$apiEmail,
+			$apiPassword,
+			'Content-Type: application/x-www-form-urlencoded'
+		];
+
 		$curl = curl_init($url);
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
 		curl_setopt($curl, CURLOPT_VERBOSE, 1);
 		curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
 
 		curl_setopt($curl, CURLOPT_POST, 1);
-		curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query($params));
+		if($params) {
+
+			curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query($params));
+		}
 		$response = curl_exec($curl);
 		curl_close($curl);
 		var_dump($response);

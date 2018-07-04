@@ -1,5 +1,4 @@
 <?php defined('BASEPATH') or exit('No direct script access allowed');?>
-<?= $this->session->flashdata('success'); ?>
 <!DOCTYPE html>
 <html lang="pt-br" class="h-100">
 <head>
@@ -24,69 +23,78 @@
         <div class="row h-100">
             <div class="col-xl-12 d-flex align-items-center">
                 <div class="card mx-auto">
-                    <div class="card-header">
-                        <div class="row align-items-center">
-                            <div class="col-xl-10">
-                                <h2>Enviar Arquivo</h2>
+                    <?php if(!$isLoggedIn){
+
+                        $this->load->view('login');
+
+                     }else{ ?>
+                        <div class="card-header">
+                            <div class="row align-items-center">
+                                <div class="col-xl-10">
+                                    <h2>Enviar Arquivo</h2>
+                                </div>
+                                <div class="col-xl-2 pl-0">
+                                    <a href="<?= base_url().'index.php/media/logout' ?>" id="logout" class="btn btn-info">Sair</a>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="card-body">
+                        <div class="card-body">
 
-                        <?php if($this->session->flashdata('success')) { ?>
-                            <div class="container">
-                                <div class="alert alert-success alert-dismissable">
-                                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                                    <?= $this->session->flashdata('success'); ?>
-                                </div>
-                            </div>
-                        <?php } else if($this->session->flashdata('errors')) {
-                            foreach($this->session->flashdata('errors') as $err) { ?>
+                            <?php if($this->session->flashdata('success')) { ?>
                                 <div class="container">
-                                    <div class="alert alert-danger alert-dismissable">
+                                    <div class="alert alert-success alert-dismissable">
                                         <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                                        <?= $err; ?>
+                                        <?= $this->session->flashdata('success'); ?>
                                     </div>
                                 </div>
-                        <?php }} ?>
+                            <?php } else if($this->session->flashdata('errors')) {
+                                foreach($this->session->flashdata('errors') as $err) { ?>
+                                    <div class="container">
+                                        <div class="alert alert-danger alert-dismissable">
+                                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                                            <?= $err; ?>
+                                        </div>
+                                    </div>
+                            <?php }} ?>
 
-                        <form class="form-horizontal" method="POST" action="<?= base_url().'index.php/media/save' ?>" enctype="multipart/form-data">
-                            <fieldset>
+                            <form class="form-horizontal" method="POST" action="<?= base_url().'index.php/media/save' ?>" enctype="multipart/form-data">
+                                <fieldset>
 
-                            <!-- Text input-->
-                            <div class="form-group">
-                                <label class="col-md-4 control-label" for="name">Nome</label>
-                                <div class="col-xl-12">
-                                    <input id="name" name="name" type="text" placeholder="nome" class="form-control input-md" required="">
+                                <!-- Text input-->
+                                <div class="form-group">
+                                    <label class="col-md-4 control-label" for="name">Nome</label>
+                                    <div class="col-xl-12">
+                                        <input id="name" name="name" type="text" placeholder="nome" class="form-control input-md" required="">
 
+                                    </div>
                                 </div>
-                            </div>
 
-                            <!-- File Button -->
-                            <div class="form-group">
-                                <label class="col-md-4 control-label" for="file">Arquivo</label>
-                                <div class="col-xl-12" style="overflow: hidden;">
-                                    <input id="file" name="file" class="input-file" type="file">
+                                <!-- File Button -->
+                                <div class="form-group">
+                                    <label class="col-md-4 control-label" for="file">Arquivo</label>
+                                    <div class="col-xl-12" style="overflow: hidden;">
+                                        <input id="file" name="file" class="input-file" type="file">
+                                    </div>
                                 </div>
-                            </div>
 
-                            <!-- Button -->
-                            <div class="form-group">
-                                <label class="col-md-4 control-label" for="submit"></label>
-                                <div class="col-xl-12">
-                                <button id="submit" name="submit" class="btn btn-success">Enviar</button>
+                                <!-- Button -->
+                                <div class="form-group">
+                                    <label class="col-md-4 control-label" for="submit"></label>
+                                    <div class="col-xl-12">
+                                        <button id="submit" name="submit" class="btn btn-success">Enviar</button>
+                                    </div>
                                 </div>
-                            </div>
 
-                            </fieldset>
+                                </fieldset>
 
-                        </form>
-                    </div>
-                </div>
+                            </form>
+                        </div>
+                    <?php } ?>
+                </div> <!-- end card -->
             </div>
+        </div>
 
     </div>
-</div>
 
 </body>
 <script src="<?= base_url('assets/bootstrap/jquery-3.2.1.slim.min.js')?>"></script>
